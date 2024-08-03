@@ -20,7 +20,7 @@ resource "libvirt_volume" "os_base" {
 
   name   = "${var.environment}-${each.key}-base.qcow2"
   pool   = var.default_disk_pool
-  source = lookup(var.cloud_images, each.key)
+  source = var.cloud_images[each.key]
   format = "qcow2"
 }
 
@@ -50,7 +50,7 @@ resource "libvirt_cloudinit_disk" "cloudinit" {
       ssh_authorized_keys = [local.public_ssh_key]
 
   })
-  network_config = templatefile("${path.module}/templates/network_config.tftpl",
+  network_config = templatefile("${path.module}/templates/network_config_v${each.value.network_config_version}.tftpl",
     {
       networks = each.value.networks,
       domain   = try(each.value.domain, var.dns_domain)
@@ -96,14 +96,4 @@ resource "libvirt_domain" "instances" {
     listen_type = "address"
     autoport    = "true"
   }
-}
-
-# Combine resources for export
-resource "terraform_data" "ssh_key_pair" {
-
-  input = {
-    "private_ssh_key" = local.private_ssh_key,
-    "public_ssh_key"  = local.public_ssh_key
-  }
-
 }

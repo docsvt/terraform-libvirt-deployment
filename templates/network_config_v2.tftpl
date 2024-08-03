@@ -5,9 +5,7 @@ ethernets:
     %{ if network.ip_type == "dhcp" }dhcp4: true%{ else }dhcp4: false
     addresses: [ ${network.ip_cidr} ]
     %{~ if network.gateway != null ~}
-    routes:
-      - to: default
-        via: ${network.gateway}%{ endif } %{ endif }
+    gateway4: ${network.gateway}%{ endif } %{ endif }
     %{~ if network.nameservers != null ~}
     nameservers:
       addresses:

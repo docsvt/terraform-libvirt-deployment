@@ -1,0 +1,26 @@
+version: 1
+config:
+%{ for network in networks ~}
+  - type: physical
+    name: ${network.iface}
+    subnets:
+    %{ if network.ip_type == "dhcp" }  - type: dhcp%{ else }  - type: static
+        address: ${network.ip_cidr}
+    %{~ if network.gateway != null ~}
+        gateway: ${network.gateway}%{ endif } %{ endif }
+    %{~ if network.nameservers != null ~}
+  - type: nameserver
+    address:
+%{for nameservers in network.nameservers ~}
+      - ${nameservers}
+%{ endfor ~}
+    search:
+%{ if can(network.dns_search) ~}
+%{ for entry in network.dns_search ~}
+      - ${entry}
+%{ endfor ~}
+%{ else ~}
+      - ${domain}
+%{ endif ~}
+%{ endif ~}
+%{ endfor ~}
