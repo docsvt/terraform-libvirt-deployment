@@ -5,8 +5,8 @@ locals {
 
 
 module "libvirt-lab" {
-  source = "../"
-  #source           = "github.com/docsvt/terraform-libvirt-deployment?ref=07216c9"
+  # source = "../"
+  source           = "github.com/docsvt/terraform-libvirt-deployment?ref=77bf7b0"
   cloud_images     = var.cloud_images
   nat_networks     = try(local.deployment.nat_networks, {})
   bridget_networks = try(local.deployment.bridget_networks, {})
